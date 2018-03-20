@@ -2,18 +2,18 @@
 
 # Step 1
 
-[save YOLO model from pytorch to ONNX](1.yolo2_pytorch_onnx_save_model.ipynb)
+[[Save YOLO model from pytorch to ONNX]](1.yolo2_pytorch_onnx_save_model.ipynb)
 
 ### Requirements
-pytorch
+- pytorch
 
 # Step 2
 
-[load YOLO model from ONNX and inference with Caffe2 or Tensorflow](2.yolo2_pytorch_onnx_load_model.ipynb)
+[[Load YOLO model from ONNX and inference with Caffe2 or Tensorflow]](2.yolo2_pytorch_onnx_load_model.ipynb)
 
 ### Requirements
-onnx
-onnx-tf or onnx-caffe2
-numpy
-pillow
+- onnx
+- onnx-tf or onnx-caffe2
+- numpy
+- pillow
 
