@@ -13,7 +13,7 @@
 
 ### Requirements
 - onnx
-- onnx-tf or onnx-caffe2 (tensorflow or caffe2 are not necessary)
+- (tensorflow and onnx-tf) or (Caffe2 and onnx-caffe2)
 - numpy
 - pillow
 
