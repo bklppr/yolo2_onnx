@@ -56,7 +56,7 @@ for more detail [[please refer this]](5.Visualization.ipynb)
 
 # Tutorials - Step by Step
 
-## 1. Object Detection - YOLO2
+## Object Detection - YOLO2
 #### Step 1 - Save YOLO model from PyTorch to ONNX
 1.yolo2_pytorch_onnx_save_model.ipynb
 [[Please refer this]](1.yolo2_pytorch_onnx_save_model.ipynb)
@@ -65,7 +65,7 @@ for more detail [[please refer this]](5.Visualization.ipynb)
 2.yolo2_pytorch_onnx_load_model.ipynb
 [[Please refer this]](2.yolo2_pytorch_onnx_load_model.ipynb)
 
-## 2. Image Recognition - VGG
+## Image Recognition - VGG
 #### Save model from PyTorch to ONNX, Load model from ONNX, and Infer with Caffe2 or Tensorflow
 3.vggnet_onnx.ipynb
 [[Please refer this]](3.vggnet_onnx.ipynb)
