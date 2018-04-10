@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-from time import ctime, localtime
+from time import time, ctime, localtime
 
 #python version
 from sys import version
@@ -19,7 +19,8 @@ from PIL import ImageTk, Image
 #from subprocess import call
 from Inference import Inference
 models=['yolo2', 'vgg11', 'vgg13', 'vgg16', 'vgg19']
-
+backends =  ['tensorflow', 'caffe2']
+devices =  ["CPU" , "CUDA:0"]
 
 class GUI():
     vb_dict = {}
@@ -37,6 +38,8 @@ class GUI():
         self.master.title('build CNN -- load model')         
         self.label_1to1_text_combobox("Model", models , width=50 ) # models = ("inception_v3","vgg16"...)
         self.label_1to1_text_entry(name="ImageUrl", default_text="data/person.jpg", width=100)
+        self.label_1to1_text_combobox("Backend", backends , width=50 ) 
+        self.label_1to1_text_combobox("Device", devices , width=50 ) 
         self.vb_dict = self.generate_variable_dict()
         self.button(self.click_show_img, "Show Image")
         self.button(self.click_inference, "Inference")
@@ -50,8 +53,21 @@ class GUI():
     
     def click_inference(self):
         self.vb_dict = self.generate_variable_dict() # cannot skip
-        str_ = Inference(modelName=self.vb_dict["Model"], imgfile=self.vb_dict["ImageUrl"]).predict()
+        imgfile=self.vb_dict["ImageUrl"]
+        modelName = self.vb_dict["Model"]
+        backend = self.vb_dict["Backend"]
+        device = self.vb_dict["Device"]
+        stime = time()
+        str_ = Inference(modelName=modelName, imgfile=imgfile, backend=backend, device=device).predict()
+        etime = time()
+        str_ = "Time cost : {:.2f} sec \n\n".format(etime-stime) + str_ 
         self.inference_result_str.set(str(str_))
+        if modelName == models[0]:
+            self.show_predicted_img()
+        
+    def show_predicted_img(self):
+        img_path = "predictions.jpg"
+        self.img_label(path=img_path)   
         
     # --------Component Conbination --------- 
     def label_1to1_text_combobox(self, name="", values=("1","2"), default_Chosen=0, width=10):
