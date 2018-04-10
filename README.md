@@ -13,9 +13,12 @@ The inference result and time cost will be shown on screen.
 
 ## API-demo
 Python code: 
+modelName is selected from ['yolo2', 'vgg11', 'vgg13', 'vgg16', 'vgg19']
+backend is selected from ['tensorflow', 'caffe2']
+device is selected from ["CPU" , "CUDA:0"]
 ```python
 from Inference import Inference
-a  =  Inference(modelName="yolo2")
+a  =  Inference(modelName="yolo2", imgfile = './data/dog.jpg', backend="tensorflow", device="CUDA:0")
 str_ = a.predict()
 ```
 Using above python code to get prediction result (the returned string)
