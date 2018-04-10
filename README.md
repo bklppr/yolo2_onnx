@@ -1,10 +1,10 @@
 
-# Objective - Using ONNX for Inference
+# Using ONNX for Inference (YOLO2, VGG)
 convert YOLO2 and VGG models of PyTorch into ONNX format, and do inference by onnx-tensorflow or onnx-caffe2 backend.   
 
 ## GUI-demo
-Under this root folder, open terminal and input command line:
-```
+open terminal under this root folder, and run command line:
+```shell
 python GUI.py
 ```
 Edit image path(can be local or URL) and select model, beckend, and device. Then press `inference` button.
@@ -13,13 +13,13 @@ The inference result and time cost will be shown on screen.
 
 ## API-demo
 Python code: 
-```
+```python
 from Inference import Inference
 a  =  Inference(modelName="yolo2")
 str_ = a.predict()
 ```
 Using above python code to get prediction result (the returned string)
-```
+```python
 print (str_)
 ```
 >
@@ -32,8 +32,8 @@ for more detail [[please refer this]](4.Inference_test.ipynb)
 
 ## ONNX-IR Visualization (Optional)
 
-Need to install pydot and graphviz first
-```
+Need to install pydot and graphviz first, and run command lines:
+```shell
 mkdir dot svg
 python net_drawer.py --input "onnx/vgg19.onnx" --output "dot/vgg19.dot" --embed_docstring
 dot -Tsvg "dot/vgg19.dot" -o "svg/vgg19.svg"
