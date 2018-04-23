@@ -23,13 +23,13 @@ backends =  ['tensorflow', 'caffe2']
 devices =  ["CPU" , "CUDA:0"]
 #from IR_Extraction import get_list_of_sequencial_nodes
 #options_for_seq_search = get_list_of_sequencial_nodes()
-options_for_seq_search = reversed( [    ['Conv'], 
+options_for_seq_search = list(reversed( [['Conv'], 
                                         ['Conv', 'Add'], 
                                         ['Conv', 'Add', 'Relu'], 
                                         ['Conv', 'Add', 'Relu', 'MaxPool'], 
                                         ['Conv', 'BatchNormalization'],
                                         ['Conv', 'BatchNormalization', 'LeakyRelu'],
-                                        ['Conv', 'BatchNormalization', 'LeakyRelu', 'MaxPool']])
+                                        ['Conv', 'BatchNormalization', 'LeakyRelu', 'MaxPool']]))
 seq_search_TXT = ["-> ".join(seq) for seq in options_for_seq_search] 
 
 class GUI():
