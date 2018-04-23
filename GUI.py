@@ -21,9 +21,22 @@ from Inference import Inference
 models=['yolo2', 'vgg11', 'vgg13', 'vgg16', 'vgg19']
 backends =  ['tensorflow', 'caffe2']
 devices =  ["CPU" , "CUDA:0"]
+#from IR_Extraction import get_list_of_sequencial_nodes
+#options_for_seq_search = get_list_of_sequencial_nodes()
+options_for_seq_search = reversed( [    ['Conv'], 
+                                        ['Conv', 'Add'], 
+                                        ['Conv', 'Add', 'Relu'], 
+                                        ['Conv', 'Add', 'Relu', 'MaxPool'], 
+                                        ['Conv', 'BatchNormalization'],
+                                        ['Conv', 'BatchNormalization', 'LeakyRelu'],
+                                        ['Conv', 'BatchNormalization', 'LeakyRelu', 'MaxPool']])
+seq_search_TXT = ["-> ".join(seq) for seq in options_for_seq_search] 
 
 class GUI():
+    
     vb_dict = {}
+    infer = None 
+    modelName,backend,device = "", "", ""
     def __init__(self, master):
         self.master = master 
         self.row = 0 #for grid
@@ -40,34 +53,61 @@ class GUI():
         self.label_1to1_text_entry(name="ImageUrl", default_text="data/person.jpg", width=100)
         self.label_1to1_text_combobox("Backend", backends , width=50 ) 
         self.label_1to1_text_combobox("Device", devices , width=50 ) 
+        self.label_1to1_text_combobox("SearchSeq", seq_search_TXT , width=100 )
         self.vb_dict = self.generate_variable_dict()
-        self.button(self.click_show_img, "Show Image")
+        self.button(self.click_show_img, "Show Orig Image")
         self.button(self.click_inference, "Inference")
-        self.inference_result_str = StringVar()
-        self.textvariable_label(textvariable=self.inference_result_str)
+        self.button(self.click_search_sequencial_nodes, "Search Nodes")
+        self.show_str = StringVar()
+        self.textvariable_label(textvariable=self.show_str)
         
     def click_show_img(self):
         self.vb_dict = self.generate_variable_dict() # cannot skip
         img_path = self.vb_dict["ImageUrl"]
-        self.img_label(path=img_path)
-    
-    def click_inference(self):
+        self.img_label(path=img_path,title='Original image')
+        
+    def build_infer(self):  
+        self.show_str.set("Please wait....building model")#show txt
         self.vb_dict = self.generate_variable_dict() # cannot skip
-        imgfile=self.vb_dict["ImageUrl"]
         modelName = self.vb_dict["Model"]
         backend = self.vb_dict["Backend"]
         device = self.vb_dict["Device"]
-        stime = time()
-        str_ = Inference(modelName=modelName, imgfile=imgfile, backend=backend, device=device).predict()
-        etime = time()
-        str_ = "Time cost : {:.2f} sec \n\n".format(etime-stime) + str_ 
-        self.inference_result_str.set(str(str_))
-        if modelName == models[0]:
+        is_chg = not (self.modelName==modelName and self.backend==backend and self.device==device) 
+        if (self.infer is None) or (is_chg): 
+            self.infer = Inference(modelName=modelName,backend=backend, device=device)
+            self.modelName=modelName; self.backend=backend; self.device=device
+        
+    def click_search_sequencial_nodes(self):
+        #build infer
+        self.build_infer()
+        #seq
+        self.vb_dict = self.generate_variable_dict() # cannot skip
+        seqTXT = self.vb_dict["SearchSeq"]
+        seq = options_for_seq_search[seq_search_TXT.index(seqTXT)]
+        #search_n_visualize_sequence
+        self.show_str.set("Please wait....search_sequencial_nodes")#show txt
+        str_ = self.infer.search_n_visualize_sequence(seq)
+        self.show_str.set(str(str_))#show txt
+        
+    def click_inference(self):
+        #build infer
+        self.build_infer()
+        #img
+        self.vb_dict = self.generate_variable_dict() # cannot skip
+        imgfile = self.vb_dict["ImageUrl"]
+        #predict
+        self.show_str.set("Please wait....predicting")#show txt
+        str_, time_cost = self.infer.predict(imgfile=imgfile)
+        str_ = "Time cost : {} \n\n".format(time_cost) + str_ 
+        self.show_str.set(str(str_))#show txt
+        #pred img
+        if self.infer.is_obj_det:# if is Object Detect 
             self.show_predicted_img()
         
     def show_predicted_img(self):
-        img_path = "predictions.jpg"
-        self.img_label(path=img_path)   
+        self.click_show_img()#Original
+        predicted_img_path = "predictions.jpg"
+        self.img_label(path=predicted_img_path,title='Prediction image')   
         
     # --------Component Conbination --------- 
     def label_1to1_text_combobox(self, name="", values=("1","2"), default_Chosen=0, width=10):
@@ -161,10 +201,10 @@ class GUI():
         self.all_comp[-1].grid(row=self.row, column=1) #
         self.row += 1 #   
 
-    def img_label(self, path="cat1.jpeg"): 
+    def img_label(self, path="cat1.jpeg", title='image'): 
         window = Toplevel()
         #window.geometry('400x400')
-        window.title('image')  
+        window.title(title)  
         img = ImageTk.PhotoImage(Image.open(path))
         label = Label(window, image = img)
         label.pack()
