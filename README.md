@@ -1,6 +1,7 @@
 
 # Using ONNX for Inference (YOLO2, VGG)
-convert YOLO2 and VGG models of PyTorch into ONNX format, and do inference by onnx-tensorflow or onnx-caffe2 backend.   
+convert YOLO2 and VGG models of PyTorch into ONNX format, and do inference by onnx-tensorflow or onnx-caffe2 backend. 
+Also allow to visualize the model structure(.svg) and search matching substructure. 
 
 ## GUI-demo
 open terminal under this root folder, and run command line:
@@ -9,9 +10,13 @@ python GUI.py
 ```
 Edit image path(can be local or URL) and select model, beckend, and device. Then press `inference` button.
 The inference result and time cost will be shown on screen. 
-<center><img src="GUI_demo_1.png" width=600></center>
-And you can change SearchSeq and then press `Search Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.
-<center><img src="GUI_demo_2.png" width=600></center>
+<center><img src="demo_fig/GUI_demo_6.png" width=600></center>
+Pressing `Model_Visualization` button will:
+- Show Model-related Parameters. For now, only support the number of parameters and flops. 
+- Show Model Graph. Open a SVG image file(throgth Web Browser). Zoom in/out to check the model structure.
+<center><img src="demo_fig/GUI_demo_8.png" width=600></center>
+And you can change SearchSeq and then press `Search_Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.
+<center><img src="demo_fig/GUI_demo_7.png" width=600></center>
 
 ## API-demo
 Python code: 
