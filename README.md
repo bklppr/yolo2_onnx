@@ -14,9 +14,9 @@ The inference result and time cost will be shown on screen.
 Pressing `Model_Visualization` button will:
 - Show Model-related Parameters. For now, only support the number of parameters and flops. 
 - Show Model Graph. Open a SVG image file(throgth Web Browser). Zoom in/out to check the model structure.
-<center><img src="demo_fig/GUI_demo_8.png" width=600></center>
+<center><img src="demo_fig/GUI_demo_8.png" width=400></center>
 And you can change SearchSeq and then press `Search_Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.
-<center><img src="demo_fig/GUI_demo_7.png" width=600></center>
+<center><img src="demo_fig/GUI_demo_7.png" width=400></center>
 
 ## API-demo
 Python code: 
@@ -48,14 +48,14 @@ mkdir dot svg
 python net_drawer.py --input "onnx/vgg19.onnx" --output "dot/vgg19.dot" --embed_docstring
 dot -Tsvg "dot/vgg19.dot" -o "svg/vgg19.svg"
 ```
-<center><img src="visualize_demo.png" width=600></center>
+<center><img src="demo_fig/visualize_demo.png" width=600></center>
 
 You can mark some specific nodes using `--marked` and `--marked_list`.
 For example, if you want to mark node 2,3 and 4, add `--marked 1 --marked_list 2_3_4` after `python net_drawer.py` command.
 ```shell
 python net_drawer.py --input "onnx/vgg19.onnx" --output "dot/vgg19.dot" --embed_docstring --marked 1 --marked_list 2_3_4
 ```
-<center><img src="visualize_demo_1.png" width=1000></center>
+<center><img src="demo_fig/visualize_demo_1.png" width=1000></center>
 
 for more detail [[please refer this]](5.Visualization.ipynb)
 
