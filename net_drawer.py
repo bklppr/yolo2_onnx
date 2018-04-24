@@ -1,4 +1,4 @@
-# https://github.com/onnx/onnx/blob/master/onnx/tools/net_drawer.py
+# modified from https://github.com/onnx/onnx/blob/master/onnx/tools/net_drawer.py
 
 # A library and utility for drawing ONNX nets. Most of this implementation has
 # been borrowed from the caffe2 implementation
@@ -24,9 +24,17 @@ from onnx import ModelProto
 import pydot
 
 
+
 OP_STYLE = {
     'shape': 'box',
     'color': '#0F9D58',
+    'style': 'filled',
+    'fontcolor': '#FFFFFF'
+}
+
+OP_STYLE_1 = {
+    'shape': 'box',
+    'color': '#930e9d',
     'style': 'filled',
     'fontcolor': '#FFFFFF'
 }
@@ -46,8 +54,8 @@ def _form_and_sanitize_docstring(s):
     return url
 
 
-def GetOpNodeProducer(embed_docstring=False, **kwargs):
-    def ReallyGetOpNode(op, op_id):
+def GetOpNodeProducer(embed_docstring=False):#**OP_STYLE
+    def ReallyGetOpNode(op, op_id, **kwargs):
         if op.name:
             node_name = '%s/%s (op#%d)' % (op.name, op.op_type, op_id)
         else:
@@ -70,14 +78,18 @@ def GetPydotGraph(
     rankdir='LR',
     node_producer=None,
     embed_docstring=False,
+    marked_list=[],
 ):
     if node_producer is None:
-        node_producer = GetOpNodeProducer(embed_docstring=embed_docstring, **OP_STYLE)
+        node_producer = GetOpNodeProducer(embed_docstring=embed_docstring)#**OP_STYLE
     pydot_graph = pydot.Dot(name, rankdir=rankdir)
     pydot_nodes = {}
     pydot_node_counts = defaultdict(int)
-    for op_id, op in enumerate(graph.node):
-        op_node = node_producer(op, op_id)
+    for op_id, op in enumerate(graph.node):  
+        if op_id in marked_list:
+            op_node = node_producer(op, op_id, **OP_STYLE_1)
+        else:
+            op_node = node_producer(op, op_id, **OP_STYLE)
         pydot_graph.add_node(op_node)
         for input_name in op.input:
             if input_name not in pydot_nodes:
@@ -127,7 +139,19 @@ def main():
         "--embed_docstring", action="store_true",
         help="Embed docstring as javascript alert. Useful for SVG format.",
     )
+    parser.add_argument(
+        "--marked", type=int, default=0,
+        help="0: original, 1: marked",
+    )
+    parser.add_argument(
+        "--marked_list", type=str, default="",
+        help="if 2_3_4, means node 2,3,4 will be marked",
+    )
     args = parser.parse_args()
+    if args.marked:
+        marked_list = [int(e) for e in args.marked_list.split('_')]
+    else:
+        marked_list = []
     model = ModelProto()
     with open(args.input, 'rb') as fid:
         content = fid.read()
@@ -138,8 +162,9 @@ def main():
         rankdir=args.rankdir,
         node_producer=GetOpNodeProducer(
             embed_docstring=args.embed_docstring,
-            **OP_STYLE
+            #**OP_STYLE
         ),
+        marked_list = marked_list,
     )
     pydot_graph.write_dot(args.output)
 
