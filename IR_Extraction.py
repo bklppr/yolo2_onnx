@@ -4,16 +4,22 @@ import pickle
 import os
 import numpy as np
 import time
-
-
-        
-def generate_svg(modelName):
+   
+def generate_svg(modelName, marked_nodes=[]):
     """
     generate SVG figure from existed ONNX file
     """
+    if marked_nodes ==[]:
+        addfilenamestr = ""
+        add_command_str = ""
+    else:
+        addfilenamestr = "_marked"
+        marked_str = '_'.join([str(e) for e in marked_nodes])
+        add_command_str =  " --marked 1 --marked_list {}".format(marked_str)
+        
     onnxfilepath = "onnx/{}.onnx".format(modelName)
-    dotfilepath = "dot/{}.dot".format(modelName)
-    svgfilepath = "svg/{}.svg".format(modelName)
+    dotfilepath = "dot/{}{}.dot".format(modelName,addfilenamestr)
+    svgfilepath = "svg/{}{}.svg".format(modelName,addfilenamestr)
     # check if onnx file exist
     if not os.path.isfile(os.getcwd()+"/"+onnxfilepath):
         print('generate_svg Error! Onnx file not exist!')
@@ -21,9 +27,10 @@ def generate_svg(modelName):
     else:
         make_dir("dot")
         make_dir("svg")
-        subprocess.call("python net_drawer.py --input {} --output {} --embed_docstring".format(onnxfilepath,dotfilepath), shell=True) # onnx -> dot
+        subprocess.call("python net_drawer.py --input {} --output {} --embed_docstring {}".format(onnxfilepath,dotfilepath,add_command_str), shell=True) # onnx -> dot
         subprocess.call("dot -Tsvg {} -o {}".format(dotfilepath,svgfilepath), shell=True)# dot -> svg
-        print('generate_svg success..')
+        print('generate_svg ..end')
+    return svgfilepath 
         
 def get_init_shape_dict(rep):
     """

@@ -55,16 +55,25 @@ class GUI():
         self.label_1to1_text_combobox("Device", devices , width=50 ) 
         self.label_1to1_text_combobox("SearchSeq", seq_search_TXT , width=100 )
         self.vb_dict = self.generate_variable_dict()
-        self.button(self.click_show_img, "Show Orig Image")
+        self.button(self.click_show_orig_img, "Show Orig Image")
         self.button(self.click_inference, "Inference")
+        self.button(self.click_show_model, "Model Visualization")
         self.button(self.click_search_sequencial_nodes, "Search Nodes")
         self.show_str = StringVar()
         self.textvariable_label(textvariable=self.show_str)
         
-    def click_show_img(self):
+    def click_show_orig_img(self):
         self.vb_dict = self.generate_variable_dict() # cannot skip
         img_path = self.vb_dict["ImageUrl"]
         self.img_label(path=img_path,title='Original image')
+        
+    def click_show_model(self):
+        #build infer
+        self.build_infer()
+        show_str = "\nmodel name = {} \n\nnumber of param = {} \n\nnumber of flops = {}\n\n ".format(self.infer.modelName , self.infer.n_param, self.infer.n_flops)
+        import webbrowser
+        webbrowser.open(self.infer.svgfilepath)  # open <svgfilepath> in web
+        self.show_str.set(show_str)#show txt
         
     def build_infer(self):
         self.show_str.set(" \n\n\n!!!!! ")#clear old txt
@@ -81,15 +90,18 @@ class GUI():
     def click_search_sequencial_nodes(self):
         #build infer
         self.build_infer()
-        #seq
+        #seq: ["Conv", "Add", ...]
         self.vb_dict = self.generate_variable_dict() # cannot skip
         seqTXT = self.vb_dict["SearchSeq"]
         seq = options_for_seq_search[seq_search_TXT.index(seqTXT)]
         #search_n_visualize_sequence
         #self.show_str.set("Please wait....search_sequencial_nodes")#show txt
-        str_ = self.infer.search_n_visualize_sequence(seq)
-        self.show_str.set(str(str_))#show txt
-        
+        show_str, is_match, marked_svgfilepath = self.infer.search_n_visualize_sequence(seq)
+        self.show_str.set(str(show_str))#show txt
+        if is_match:
+            import webbrowser
+            webbrowser.open(marked_svgfilepath)  # open <svgfilepath> in web
+            
     def click_inference(self):
         #build infer
         self.build_infer()
@@ -102,13 +114,8 @@ class GUI():
         str_ = "Time cost : {} \n\n".format(time_cost) + str_ 
         self.show_str.set(str(str_))#show txt
         #pred img
-        if self.infer.is_obj_det:# if is Object Detect 
-            self.show_predicted_img()
-        
-    def show_predicted_img(self):
-        #self.click_show_img()#Original
-        predicted_img_path = "predictions_samesize.jpg"
-        self.img_label(path=predicted_img_path,title='Prediction image')   
+        if self.infer.is_obj_det:# if is Object Detect  
+            self.img_label(path="predictions_samesize.jpg",title='Prediction image')   
         
     # --------Component Conbination --------- 
     def label_1to1_text_combobox(self, name="", values=("1","2"), default_Chosen=0, width=10):

@@ -15,6 +15,7 @@ class Inference():
     rep, backend = None, None
     prepare_time = 0.0
     # define in self.extract_IR_info()
+    svgfilepath = ""
     Node2nextEntity, Entity2nextNode = None, None
     n_param, n_flops = -1, -1
     #options_for_sequence_search = []
@@ -55,25 +56,36 @@ class Inference():
         self.n_param, self.n_flops = calculate_num_param_n_num_flops(kernel_shape_dict)
         
         #visualization
-        generate_svg(self.modelName)
+        self.svgfilepath = generate_svg(self.modelName)
         
         #graph related
         self.Node2nextEntity, self.Entity2nextNode = self.extract_graph_edges_dict_from_IR(self.model, self.modelName)
         #self.options_for_sequence_search = get_list_of_sequencial_nodes()
 
     def search_n_visualize_sequence(self, search_sequence=['Conv', 'Add', 'Relu', 'MaxPool'], if_print = False): 
+        #search_sequence
         matching_nodes = find_sequencial_nodes(self.model, 
                                                self.Node2nextEntity, 
                                                self.Entity2nextNode, 
                                                search_sequence, 
                                                if_print=if_print)
-        if matching_nodes == []: matching_nodes = "NOT FOUND!!"
-        print("\nsearch:{}, \nget matching node:{}".format(search_sequence, matching_nodes))
-        """
-        draw SVG
-        """
-        return matching_nodes
-    
+        if matching_nodes == []:
+            is_match = 0
+            show_str = "\nsearch: \n{}, \nget matching node: \n{}\n\n".format(search_sequence, "NOT FOUND!!")
+        else:
+            is_match = 1
+            show_str = "\nsearch: \n{}, \nget matching node: \n{}\n\n".format(search_sequence, matching_nodes )
+        print(show_str)
+        
+        #draw SVG
+        marked_svgfilepath = ""
+        if is_match:
+            from IR_Extraction import generate_svg
+            marked_svgfilepath = generate_svg(self.modelName, marked_nodes=matching_nodes)
+        
+        return show_str, is_match, marked_svgfilepath 
+        
+        
     def predict(self, imgfile = './data/dog.jpg'):
         """
         model, rep is required
@@ -89,7 +101,7 @@ class Inference():
         print("Inference: Inference...end, {:.2f} sec".format(inference_time))
         
         #gen txt
-        time_cost = "prepare_time:{:.2f}, inference_time:{:.2f}".format(self.prepare_time,inference_time)
+        time_cost = "prepare_time: {:.2f} sec, inference_time: {:.2f} sec".format(self.prepare_time,inference_time)
         if self.is_obj_det: # Object Detect 
             str_ = self.detect(img, outputs, self.modelName, conf_thresh=0.5, nms_thresh=0.4, output_img_path='predictions.jpg')
             self.resize_prediction_image(savename='predictions_samesize.jpg')
