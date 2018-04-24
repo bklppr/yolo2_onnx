@@ -1,28 +1,38 @@
 
 # Using ONNX for Inference (YOLO2, VGG)
-convert YOLO2 and VGG models of PyTorch into ONNX format, and do inference by onnx-tensorflow or onnx-caffe2 backend. 
-Also allow to visualize the model structure(.svg) and search matching substructure. 
+Convert YOLO2 and VGG models of PyTorch into ONNX format, and do inference by onnx-tensorflow or onnx-caffe2 backend. 
+Also allow to visualize the model structure(.svg) and search matching substructure.   
 
 ## GUI-demo
-open terminal under this root folder, and run command line:
+To open GUI interface, open terminal under this root folder and run below command line:
 ```shell
 python GUI.py
 ```
-Edit image path(can be local or URL) and select model, beckend, and device. Then press `inference` button.
-The inference result and time cost will be shown on screen. 
+>*Note: for Windows System, please download http://pjreddie.com/media/files/yolo.weights first and place this file and GUI.py in the same folder before you run above line*  
+
+
+Edit image path(can be local or URL) and select "model", "backend", and "device". Then press `inference` button.
+The inference result and time cost will be shown on screen.
+
 <center><img src="demo_fig/GUI_demo_6.png" width=600></center>
-Pressing `Model_Visualization` button will:
-- Show Model-related Parameters. For now, only support the number of parameters and flops. 
-- Show Model Graph. Open a SVG image file(throgth Web Browser). Zoom in/out to check the model structure.
-<center><img src="demo_fig/GUI_demo_8.png" width=400></center>
-And you can change SearchSeq and then press `Search_Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.
-<center><img src="demo_fig/GUI_demo_7.png" width=400></center>
+Pressing `Model_Visualization` button will: 
+
+- Show Model-related Parameters. (For now, only support the number of parameters and flops. )  
+
+- Show Model Graph. Open a SVG image file throgth Web Browser. Zoom in/out to check the model structure.   
+
+<center><img src="demo_fig/GUI_demo_8.png" width=400></center> 
+
+
+You can change the "SearchSeq" item and then press `Search_Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.   
+
+<center><img src="demo_fig/GUI_demo_7.png" width=400></center>   
 
 ## API-demo
-Python code: 
-- modelName is selected from ['yolo2', 'vgg11', 'vgg13', 'vgg16', 'vgg19']
-- backend is selected from ['tensorflow', 'caffe2']
-- device is selected from ["CPU" , "CUDA:0"]
+Python code:    
+- modelName is selected from ['yolo2', 'vgg11', 'vgg13', 'vgg16', 'vgg19']   
+- backend is selected from ['tensorflow', 'caffe2']   
+- device is selected from ["CPU" , "CUDA:0"]   
 ```python
 from Inference import Inference
 a  =  Inference(modelName="yolo2", imgfile = './data/dog.jpg', backend="tensorflow", device="CUDA:0")
