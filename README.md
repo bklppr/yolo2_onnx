@@ -9,7 +9,9 @@ python GUI.py
 ```
 Edit image path(can be local or URL) and select model, beckend, and device. Then press `inference` button.
 The inference result and time cost will be shown on screen. 
-<img src="GUI_demo.png" style="width: 100px;"/>
+<img src="GUI_demo_1.png" style="width: 100px;"/>
+And you can change SearchSeq and then press `Search Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.
+<img src="GUI_demo_2.png" style="width: 100px;"/>
 
 ## API-demo
 Python code: 
