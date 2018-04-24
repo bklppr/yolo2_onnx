@@ -9,9 +9,9 @@ python GUI.py
 ```
 Edit image path(can be local or URL) and select model, beckend, and device. Then press `inference` button.
 The inference result and time cost will be shown on screen. 
-<img src="GUI_demo_1.png" style="width: 100px;"/>
+<center><img src="GUI_demo_1.png" width=600></center>
 And you can change SearchSeq and then press `Search Nodes` button. It will search the whole graph and return a list of starting node indexes of matched sub-graph.
-<img src="GUI_demo_2.png" style="width: 100px;"/>
+<center><img src="GUI_demo_2.png" width=600></center>
 
 ## API-demo
 Python code: 
@@ -43,11 +43,16 @@ mkdir dot svg
 python net_drawer.py --input "onnx/vgg19.onnx" --output "dot/vgg19.dot" --embed_docstring
 dot -Tsvg "dot/vgg19.dot" -o "svg/vgg19.svg"
 ```
+<center><img src="visualize_demo.png" width=600></center>
+
+You can mark some specific nodes using `--marked` and `--marked_list`.
+For example, if you want to mark node 2,3 and 4, add `--marked 1 --marked_list 2_3_4` after `python net_drawer.py` command.
+```shell
+python net_drawer.py --input "onnx/vgg19.onnx" --output "dot/vgg19.dot" --embed_docstring --marked 1 --marked_list 2_3_4
+```
+<center><img src="visualize_demo_1.png" width=1000></center>
+
 for more detail [[please refer this]](5.Visualization.ipynb)
-
-<img src="visualize_demo.png" style="width: 100px;"/>
-
-
 
 ## Ref. Requirements & Develop Environment
 - python >= 2.7
