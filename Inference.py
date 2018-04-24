@@ -3,10 +3,12 @@ from Onnx import OnnxImportExport, prepare_backend
 import pickle
 import time
 from IR_Extraction import *
-
+from PIL import Image 
 
 class Inference(): 
     
+    # define in self.prepare_image()
+    w_orig_img, h_orig_img =  -1, -1
     # define in self.prepare_model_and_backend()
     is_obj_det, w_img, h_img = True, -1, -1
     model, model_flat_IR = None, None
@@ -65,6 +67,7 @@ class Inference():
                                                self.Entity2nextNode, 
                                                search_sequence, 
                                                if_print=if_print)
+        if matching_nodes == []: matching_nodes = "NOT FOUND!!"
         print("\nsearch:{}, \nget matching node:{}".format(search_sequence, matching_nodes))
         """
         draw SVG
@@ -89,7 +92,8 @@ class Inference():
         time_cost = "prepare_time:{:.2f}, inference_time:{:.2f}".format(self.prepare_time,inference_time)
         if self.is_obj_det: # Object Detect 
             str_ = self.detect(img, outputs, self.modelName, conf_thresh=0.5, nms_thresh=0.4, output_img_path='predictions.jpg')
-        else:          # Image Classification
+            self.resize_prediction_image(savename='predictions_samesize.jpg')
+        else:               # Image Classification
             outputs = np.array(outputs).squeeze(0)
             from imagenet1000_clsid_to_human import cls_dict
             str_ = ""
@@ -98,15 +102,21 @@ class Inference():
         return str_, time_cost    
     
     def prepare_image(self,imgfile = './data/dog.jpg', resize_shape=(416,416) ):
-        from PIL import Image 
-        img = Image.open(imgfile).convert('RGB').resize(resize_shape)
-        img_arr = np.array(img)
+        #from PIL import Image 
+        img = Image.open(imgfile).convert('RGB')
+        self.w_orig_img, self.h_orig_img = np.array(img).shape[1], np.array(img).shape[0]
+        img_arr = np.array(img.resize(resize_shape))
         img_arr = np.expand_dims(img_arr, -1)
         img_arr = np.transpose(img_arr, (3,2,0,1))/255.0
         #print(img_arr.shape)
         return img, img_arr.astype(np.float64)
         
-        
+    def resize_prediction_image(self,imgfile = 'predictions.jpg', savename='predictions_samesize.jpg' ):
+        #from PIL import Image 
+        orig_img_size = (self.w_orig_img, self.h_orig_img)
+        img = Image.open(imgfile).convert('RGB').resize(orig_img_size)
+        img.save(savename)
+    
     def detect(self, img, outputs, modelName="yolo2", conf_thresh=0.5, nms_thresh=0.4, output_img_path='predictions.jpg'):
         print('Detect ...start' )
         #load detection information

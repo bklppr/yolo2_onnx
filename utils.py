@@ -247,18 +247,20 @@ def plot_boxes(img, boxes, savename=None, class_names=None):
     width = img.width
     height = img.height
     draw = ImageDraw.Draw(img)
+    str_ = "" #added
     for i in range(len(boxes)):
         box = boxes[i]
         x1 = (box[0] - box[2]/2.0) * width
         y1 = (box[1] - box[3]/2.0) * height
         x2 = (box[0] + box[2]/2.0) * width
         y2 = (box[1] + box[3]/2.0) * height
-
         rgb = (255, 0, 0)
+
         if len(box) >= 7 and class_names:
             cls_conf = box[5]
             cls_id = box[6]
-            print('%s: %f' % (class_names[cls_id], cls_conf))
+            #print('%s: %f' % (class_names[cls_id], cls_conf))
+            str_ += '{:.2f}%: {} \n'.format(cls_conf*100.0, class_names[cls_id])
             classes = len(class_names)
             offset = cls_id * 123457 % classes
             red   = get_color(2, offset, classes)
@@ -270,7 +272,7 @@ def plot_boxes(img, boxes, savename=None, class_names=None):
     if savename:
         print("save plot results to %s" % savename)
         img.save(savename)
-    return img
+    return str_ #img
 
 def read_truths(lab_path):
     if not os.path.exists(lab_path):
@@ -332,9 +334,14 @@ def do_detect(model, img, conf_thresh, nms_thresh, use_cuda=1):
         img = img.cuda()
     img = torch.autograd.Variable(img)
     t2 = time.time()
-
+    
+    #print ('img.shape={}'.format(img.shape))
+    
     output = model(img)
     output = output.data
+    
+    #print ('output.shape={}, type(output)={}'.format(output.shape, type(output)))    
+
     #for j in range(100):
     #    sys.stdout.write('%f ' % (output.storage()[j]))
     #print('')

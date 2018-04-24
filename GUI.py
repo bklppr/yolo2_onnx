@@ -66,8 +66,9 @@ class GUI():
         img_path = self.vb_dict["ImageUrl"]
         self.img_label(path=img_path,title='Original image')
         
-    def build_infer(self):  
-        self.show_str.set("Please wait....building model")#show txt
+    def build_infer(self):
+        self.show_str.set(" \n\n\n!!!!! ")#clear old txt
+        #self.show_str.set("Please wait....building model")#show txt
         self.vb_dict = self.generate_variable_dict() # cannot skip
         modelName = self.vb_dict["Model"]
         backend = self.vb_dict["Backend"]
@@ -85,7 +86,7 @@ class GUI():
         seqTXT = self.vb_dict["SearchSeq"]
         seq = options_for_seq_search[seq_search_TXT.index(seqTXT)]
         #search_n_visualize_sequence
-        self.show_str.set("Please wait....search_sequencial_nodes")#show txt
+        #self.show_str.set("Please wait....search_sequencial_nodes")#show txt
         str_ = self.infer.search_n_visualize_sequence(seq)
         self.show_str.set(str(str_))#show txt
         
@@ -96,7 +97,7 @@ class GUI():
         self.vb_dict = self.generate_variable_dict() # cannot skip
         imgfile = self.vb_dict["ImageUrl"]
         #predict
-        self.show_str.set("Please wait....predicting")#show txt
+        #self.show_str.set("Please wait....predicting")#show txt
         str_, time_cost = self.infer.predict(imgfile=imgfile)
         str_ = "Time cost : {} \n\n".format(time_cost) + str_ 
         self.show_str.set(str(str_))#show txt
@@ -105,8 +106,8 @@ class GUI():
             self.show_predicted_img()
         
     def show_predicted_img(self):
-        self.click_show_img()#Original
-        predicted_img_path = "predictions.jpg"
+        #self.click_show_img()#Original
+        predicted_img_path = "predictions_samesize.jpg"
         self.img_label(path=predicted_img_path,title='Prediction image')   
         
     # --------Component Conbination --------- 
