@@ -71,9 +71,9 @@ for more detail [[please refer this]](5.Visualization.ipynb)
 
 ## Ref. Requirements & Develop Environment
 - python >= 2.7
-- pytorch >= 0.3.0.post4
-- onnx >= 1.0.1
-- tensorflow >= 1.6.0 and onnx-tf 
+- pytorch >=0.2 and <= 0.3.0.post4  (v0.4.0 will Segmentation Error!, command "import onnx, torch" will fail)
+- onnx >= 1.2.1
+- tensorflow >= 1.6.0 and onnx-tf  >= 1.1.2
 - caffe2 and onnx-caffe2 (optional, if you only use Tensorflow and won't use Caffe2 for inference)
 - numpy >= 1.14.2
 - pillow >= 5.0.0

@@ -46,6 +46,8 @@ class Inference():
         """
         
         # n_param, n_flops
+        """
+        #20180615 modified: 
         init_shape_dict = self.extract_init_shape_dict_from_IR(self.rep, self.modelName)
         overall_shape_dict = self.extract_get_overall_shape_dict_from_IR(self.model, 
                                                                          init_shape_dict, 
@@ -54,7 +56,13 @@ class Inference():
         kernel_shape_dict = self.extract_kernel_shape_dict_from_IR(self.model, overall_shape_dict, 
                                                               self.backend, self.modelName)
         self.n_param, self.n_flops = calculate_num_param_n_num_flops(kernel_shape_dict)
-        
+        """
+        #20180615 modified: ignore save to pickle
+        init_shape_dict = get_init_shape_dict(self.rep)
+        overall_shape_dict = init_shape_dict
+        kernel_shape_dict = get_kernel_shape_dict(self.model, overall_shape_dict)
+        self.n_param, self.n_flops = calculate_num_param_n_num_flops(kernel_shape_dict)
+                
         #visualization
         self.svgfilepath = generate_svg(self.modelName)
         

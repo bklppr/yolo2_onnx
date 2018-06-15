@@ -43,11 +43,22 @@ def get_init_shape_dict(rep):
        return {u'2':(64,3,3,3),u'3':(64,)}
     """
     d = {}
-    for key in rep.input_dict:
-        tensor = rep.input_dict[key]
-        shape = np.array(tensor.shape, dtype=int)
-        d.update({key:shape})
-    return d    
+    if hasattr(rep, 'input_dict'):
+        for key in rep.input_dict:
+            tensor = rep.input_dict[key]
+            shape = np.array(tensor.shape, dtype=int)
+            d.update({key:shape})
+        return d          
+    elif hasattr(rep, 'predict_net'):
+        for k in rep.predict_net.tensor_dict.keys():
+            tensor = rep.predict_net.tensor_dict[k]
+            shape = np.array(tensor.shape.as_list(),dtype=float).astype(int)
+            d.update({k: shape})
+        return d  
+    else:
+        print ("rep Error! check your onnx version, it might not support IR_Extraction operation!")
+        return d
+      
 
 def get_output_shape_of_node(node, shape_dict, backend, device = "CPU"):# or "CUDA:0"
     """
