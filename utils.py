@@ -1,3 +1,4 @@
+import pdb
 import sys
 import os
 import time
@@ -128,10 +129,10 @@ def get_region_boxes(output, conf_thresh, num_classes, anchors, num_anchors, onl
     xs = torch.sigmoid(output[0]) + grid_x
     ys = torch.sigmoid(output[1]) + grid_y
 
-    anchor_w = torch.Tensor(anchors).view(num_anchors, anchor_step).index_select(1, torch.LongTensor([0]))
-    anchor_h = torch.Tensor(anchors).view(num_anchors, anchor_step).index_select(1, torch.LongTensor([1]))
-    anchor_w = anchor_w.repeat(batch, 1).repeat(1, 1, h*w).view(batch*num_anchors*h*w).cuda()
-    anchor_h = anchor_h.repeat(batch, 1).repeat(1, 1, h*w).view(batch*num_anchors*h*w).cuda()
+    anchor_w = torch.Tensor(anchors).view(num_anchors, int(anchor_step)).index_select(1, torch.LongTensor([0]))
+    anchor_h = torch.Tensor(anchors).view(num_anchors, int(anchor_step)).index_select(1, torch.LongTensor([1]))
+    anchor_w = anchor_w.repeat(batch, 1).repeat(1, 1, h*w).view(int(batch*num_anchors*h*w)).cuda()
+    anchor_h = anchor_h.repeat(batch, 1).repeat(1, 1, h*w).view(int(batch*num_anchors*h*w)).cuda()
     ws = torch.exp(output[2]) * anchor_w
     hs = torch.exp(output[3]) * anchor_h
 
@@ -400,7 +401,7 @@ def file_lines(thefilepath):
         buffer = thefile.read(8192*1024)
         if not buffer:
             break
-        count += buffer.count('\n')
+        count += buffer.count(b'\n')
     thefile.close( )
     return count
 

@@ -12,7 +12,7 @@ from image import *
 
 class listDataset(Dataset):
 
-    def __init__(self, root, shape=None, shuffle=True, transform=None, target_transform=None, train=False, seen=0, batch_size=64, num_workers=4):
+    def __init__(self, root, shape=None, shuffle=True, transform=None, target_transform=None, train=False, seen=0, batch_size=8, num_workers=2):
        with open(root, 'r') as file:
            self.lines = file.readlines()
 
