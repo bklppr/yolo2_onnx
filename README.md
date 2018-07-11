@@ -1,3 +1,11 @@
+# Setup
+
+Install [[Docker]](https://docs.docker.com/).
+If you're using EC2, this guide might be helpful: 
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html#install_docker
+
+The [[fastai image from Paperspace]](https://hub.docker.com/r/paperspace/fastai/) provides a good setup with PyTorch and Jupyter (among other things) already installed.
+
 
 # Using ONNX for Inference (YOLO2, VGG)
 Convert YOLO2 and VGG models of PyTorch into ONNX format, and do inference by onnx-tensorflow or onnx-caffe2 backend. 
