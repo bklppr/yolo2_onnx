@@ -75,6 +75,10 @@ model       = Darknet(cfgfile)
 region_loss = model.loss
 
 model.load_weights(weightfile)
+layers = list(model.children())[0]
+for item in list(layers)[:-2]:
+    item.requires_grad=False
+
 model.print_network()
 
 region_loss.seen  = model.seen
@@ -82,7 +86,7 @@ processed_batches = model.seen/batch_size
 
 init_width        = model.width
 init_height       = model.height
-init_epoch        = model.seen/nsamples 
+init_epoch        = 0 #model.seen/nsamples 
 
 kwargs = {'num_workers': num_workers, 'pin_memory': True} if use_cuda else {}
 test_loader = torch.utils.data.DataLoader(
@@ -106,7 +110,7 @@ for key, value in params_dict.items():
         params += [{'params': [value], 'weight_decay': 0.0}]
     else:
         params += [{'params': [value], 'weight_decay': decay*batch_size}]
-optimizer = optim.SGD(model.parameters(), lr=learning_rate/batch_size, momentum=momentum, dampening=0, weight_decay=decay*batch_size)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum, dampening=0, weight_decay=decay*batch_size)
 
 def adjust_learning_rate(optimizer, batch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
@@ -142,14 +146,14 @@ def train(epoch):
                        num_workers=num_workers),
         batch_size=batch_size, shuffle=False, **kwargs)
 
-    lr = adjust_learning_rate(optimizer, processed_batches)
+    lr = learning_rate #adjust_learning_rate(optimizer, processed_batches)
     logging('epoch %d, processed %d samples, lr %f' % (epoch, epoch * len(train_loader.dataset), lr))
     model.train()
     t1 = time.time()
     avg_time = torch.zeros(9)
     for batch_idx, (data, target) in enumerate(train_loader):
         t2 = time.time()
-        adjust_learning_rate(optimizer, processed_batches)
+#         adjust_learning_rate(optimizer, processed_batches)
         processed_batches = processed_batches + 1
         #if (batch_idx+1) % dot_interval == 0:
         #    sys.stdout.write('.')
@@ -181,7 +185,7 @@ def train(epoch):
             avg_time[6] = avg_time[6] + (t8-t7)
             avg_time[7] = avg_time[7] + (t9-t8)
             avg_time[8] = avg_time[8] + (t9-t1)
-            print('-------------------------------')
+            ('-------------------------------')
             print('       load data : %f' % (avg_time[0]/(batch_idx)))
             print('     cpu to cuda : %f' % (avg_time[1]/(batch_idx)))
             print('cuda to variable : %f' % (avg_time[2]/(batch_idx)))
