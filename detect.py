@@ -17,7 +17,7 @@ def detect(cfgfile, weightfile, imgfile):
     elif m.num_classes == 80:
         namesfile = 'data/coco.names'
     else:
-        namesfile = 'data/names'
+        namesfile = 'data/voc.names'
     
     use_cuda = 1
     if use_cuda:
